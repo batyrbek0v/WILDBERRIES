@@ -4,34 +4,37 @@
 // DOM-ELEMENTS
 const $container = document.querySelector('.container')
 const $row = document.querySelector('.row')
+const $create = document.querySelector('.create')
+const $signout = document.querySelector('.signout')
+
 // DOM-ELEMENTS-END
 const BASE_URL = 'https://pbasics.pythonanywhere.com'
 
 const auth_token = localStorage.getItem('authToken')
 
 window.addEventListener('load', () => {
+    getRequest()
+})
+
+function getRequest() {
     fetch(`${BASE_URL}/products`)
     .then(r => r.json())
     .then(res => cardTemplate(res))
-})
-
-function getRequest(cb) {
-    fetch(`${BASE_URL}/products`)
-       .then(r => r.json())
+   ;
 }
  
-const requests = {
-    delete:(url, auth_token) => {
-        return fetch(url, {
-            method:'DELETE',
-            headers:{
-                'Content-type': 'application/json',
-                'Authorization': `Token ${auth_token}`
-            }
-        })
-        .then(res => res.json())
-    }
-}
+// const requests = {
+//     delete:(url, auth_token) => {
+//         return fetch(url, {
+//             method:'DELETE',
+//             headers:{
+//                 'Content-type': 'application/json',
+//                 'Authorization': `Token ${auth_token}`
+//             }
+//         })
+//         .then(res => res.json())
+//     }
+// }
 
 
 function cardTemplate(base) {
@@ -42,7 +45,7 @@ function cardTemplate(base) {
                     <h2>
                         <span class="id">ID${id}</span> 
                         /
-                        ${description}
+                        ${title}
                     </h2>
                 </div>
                 <div class="card_body">
@@ -50,12 +53,11 @@ function cardTemplate(base) {
                 </div>
                 <div class="card_footer">
                     <div class="price">
-                        <p>${title} / ${price}$</p>
+                        <p>${description} / ${price}$</p>
                     </div>                    
                     <div class="buttons">
                         <button class="footer_btn" onclick="deleteCards('${id}')">Delete</button>
-                        <button class="footer_btn">Create</button>
-                        <button class="footer_btn">Update</button>
+                        <button class="footer_btn" onclick="editCards('${id}')">Edit</button>
                     </div>
                 </div>
             </div>
@@ -73,6 +75,49 @@ function deleteCards(id) {
             'Authorization': `Token ${auth_token}`
         }
     })
-    .then(requests.delete)
+    .then(getRequest)
 }
+
+function editCards(id) {
+    fetch(`${BASE_URL}/products/update/${id}`, {
+        method:"PATCH",
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Token ${auth_token}`
+        },
+        body:JSON.stringify({
+            title: prompt('Title'),
+            description: prompt('Desc'),
+            price: +prompt('price'),
+            image_url:prompt('image_url'),
+            category: +prompt('catrgory'),
+        }),
+    })
+    .then(res => res.json())
+    .then(getRequest)
+}
+$create.addEventListener('click' , e => {
+    e.preventDefault()
+    fetch(`${BASE_URL}/products/create/`, {
+        method:"POST",
+        headers:{
+            'Content-type': 'application/json',
+            'Authorization': `Token ${auth_token}`
+        },
+        body:JSON.stringify({
+            title: prompt('Title'),
+            description: prompt('Desc'),
+            price: +prompt('price'),
+            image_url:prompt('image_url'),
+            category: +prompt('catrgory'),
+        }),
+    })
+    .then(res => res.json())
+    .then(getRequest)
+})
+$signout.addEventListener('click', e => {
+    e.preventDefault()
+    localStorage.clear()
+    window.open('./auth.html', '_self')
+})
 // ----------------------------------------------------- DELETE CARDS-END-----------------------------------------
