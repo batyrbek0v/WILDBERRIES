@@ -4,8 +4,13 @@ const $email = document.querySelector('.email')
 const $btn = document.querySelector('.regist_btn')
 
 const BASE_URL = 'https://pbasics.pythonanywhere.com'
+const token = localStorage.getItem('authToken')
 
-
+window.addEventListener('load' , () => {
+    if(token){
+        window.open('./index.html' , '_self')
+    }
+})
 $btn.addEventListener('click', e => {
     e.preventDefault()
     fetch(`${BASE_URL}/auth/token/login` , {
@@ -18,16 +23,14 @@ $btn.addEventListener('click', e => {
             'Content-type': 'application/json'
         }
     })
+    .then(res => {
+        if(res.status < 400){
+            return res
+        }
+    })
     .then(r => r.json())
     .then(res => {
-        localStorage.setItem('authToken', res.auth_token)
-        const token = localStorage.getItem('authToken')
-        console.log(token);
-        if(token === 'undefined'){
-        }else{
-            window.open('./index.html' , '_self')
-            console.log(token)
-        }   
-        console.log(res);
+        setToken = localStorage.setItem('authToken', res.auth_token)
+        window.open('./index.html' , '_self')
     })
 })

@@ -18,14 +18,10 @@ $btn.addEventListener('click', e => {
             'Content-type': 'application/json'
         }
     })
+
+    .then(res => res.json())
     .then(r => {
-        if(r.status < 400){
-            window.open('./auth.html' , '_self')
-        }
-        return r.json()
-    })
-    .then(res => {
-        console.log(res);
+        window.open('./auth.html' , '_self')
     })
 })
 

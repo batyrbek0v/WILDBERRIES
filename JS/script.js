@@ -14,28 +14,16 @@ const auth_token = localStorage.getItem('authToken')
 
 window.addEventListener('load', () => {
     getRequest()
+    if(!auth_token){
+        window.open('./auth.html' , '_self')
+    }
 })
 
 function getRequest() {
     fetch(`${BASE_URL}/products`)
     .then(r => r.json())
     .then(res => cardTemplate(res))
-   ;
 }
- 
-// const requests = {
-//     delete:(url, auth_token) => {
-//         return fetch(url, {
-//             method:'DELETE',
-//             headers:{
-//                 'Content-type': 'application/json',
-//                 'Authorization': `Token ${auth_token}`
-//             }
-//         })
-//         .then(res => res.json())
-//     }
-// }
-
 
 function cardTemplate(base) {
     const newBase = base.map(({id,description,title,price,image,image_url}) => {
@@ -67,6 +55,7 @@ function cardTemplate(base) {
 }
 
 // ----------------------------------------------------- DELETE CARDS-----------------------------------------
+
 function deleteCards(id) {
     fetch(`${BASE_URL}/products/delete/${id}`, {
         method:'DELETE',
@@ -77,6 +66,8 @@ function deleteCards(id) {
     })
     .then(getRequest)
 }
+
+// ----------------------------------------------------- EDIT CARDS-----------------------------------------
 
 function editCards(id) {
     fetch(`${BASE_URL}/products/update/${id}`, {
@@ -90,12 +81,15 @@ function editCards(id) {
             description: prompt('Desc'),
             price: +prompt('price'),
             image_url:prompt('image_url'),
-            category: +prompt('catrgory'),
+            category: +prompt('category'),
         }),
     })
     .then(res => res.json())
     .then(getRequest)
 }
+
+// ----------------------------------------------------- CREATE CARDS-----------------------------------------
+
 $create.addEventListener('click' , e => {
     e.preventDefault()
     fetch(`${BASE_URL}/products/create/`, {
@@ -109,15 +103,19 @@ $create.addEventListener('click' , e => {
             description: prompt('Desc'),
             price: +prompt('price'),
             image_url:prompt('image_url'),
-            category: +prompt('catrgory'),
+            category: +prompt('category'),
         }),
     })
     .then(res => res.json())
     .then(getRequest)
 })
+
+// ----------------------------------------------------- SIGN OUT-----------------------------------------
+
 $signout.addEventListener('click', e => {
     e.preventDefault()
-    localStorage.clear()
-    window.open('./auth.html', '_self')
+    localStorage.clear()    
+    window.open('./auth.html' , '_self')
 })
-// ----------------------------------------------------- DELETE CARDS-END-----------------------------------------
+
+// ===================================================================================================================================================
