@@ -110,7 +110,7 @@ body{
 }
 @media screen and (max-width:376px) {
     .card{
-        height: 45%;
+        height: 55%;
         justify-content: space-around;
     }
 }
